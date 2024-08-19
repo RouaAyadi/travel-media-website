@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { createTrip, useTripContext } from '../../../store/Trip';
 import dynamic from 'next/dynamic';
-import StepModal from './stepmodal';
+import StepModal from './StepModal';
 
 // Dynamically import the MapComponent with no SSR
 const MapModal = dynamic(() => import('./modalmap'), { ssr: false });
