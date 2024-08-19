@@ -1,4 +1,6 @@
 import axios from "axios";
+import { twMerge } from "tailwind-merge"
+
 export const fetchUserProfileById = async (id) => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/user-profiles?populate=*&filters[user][id][$eq]=${id}`,);
@@ -40,4 +42,37 @@ export const fetchUserProfileById = async (id) => {
       return null;
     }
   };
- 
+
+
+  
+export function cn(...inputs) {
+  return twMerge(clsx(inputs))
+}
+ // Function to fetch posts by title
+export const fetchPostsByTitle = async (title) => {
+  try {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trips`, {
+      params: {
+        filters: {
+          title: {
+            $containsi: title, // Case-insensitive partial match
+          },
+        },
+        populate: {
+          user_profile: {
+            populate: {
+              photo: true,
+              user: true,
+            },
+          },
+          media: true,
+          trip_steps: true, // Populate trip_steps if needed
+        },
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch posts by title:', error);
+    return null;
+  }
+};

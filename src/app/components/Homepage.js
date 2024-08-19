@@ -5,11 +5,19 @@ import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import Link from 'next/link';
 import Navbar from './navbar2'; // Make sure the path is correct
+import PostModal from './PostModal';
 
-const HomePage = ({ trips }) => {
+const HomePage = ({ tripss }) => {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [expandedDescription, setExpandedDescription] = useState({});
   const [descriptionHeights, setDescriptionHeights] = useState({});
+  const [trips, setTrips] = useState(tripss);
+
+
+  const handleSearch = (results) => {
+    setTrips(results); // Update the trips state with the search results
+  };
+  
 
   const handleMediaClick = (mediaUrl) => {
     setSelectedMedia(mediaUrl);
@@ -98,7 +106,7 @@ const HomePage = ({ trips }) => {
 
   return (
     <div className="min-h-screen flex flex-col items-center relative">
-      <Navbar />
+      <Navbar onSearch={handleSearch} />
       <div className="absolute inset-0 overflow-hidden mt-20">
         {/* Background Illustrations */}
         <img
