@@ -6,7 +6,7 @@ export default async function Home() {
   const tripResp = await fetchAllPosts();
   return ( 
     <div className="container mx-auto ">
-      <Homepage trips={tripResp?.data}  ></Homepage>
+      <Homepage tripss={tripResp?.data}  ></Homepage>
     </div>
   )
 }

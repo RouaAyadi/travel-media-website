@@ -113,7 +113,7 @@ const ProfilePage = ({ data, userID }) => {
       await fetchMe(dispatch);
       // setPreviewUrl(updatedUser.photo.url ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${updatedUser.photo.url}` : '/default.webp');
       setFile(null);
-      alert('upload profile picture succefully.');
+      alert('upload profile picture successfully.');
 
     } catch (error) {
       console.error('Error uploading profile picture:', error);

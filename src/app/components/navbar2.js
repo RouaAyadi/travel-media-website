@@ -3,23 +3,58 @@ import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-
-const Navbar = () => {
+const Navbar = ({ onSearch }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('jwt'); // Adjust the key if different
-    const user = JSON.parse(localStorage.getItem('user')); // Retrieve user data from local storage
+    const token = localStorage.getItem('jwt');
+    const user = JSON.parse(localStorage.getItem('user'));
 
     if (token && user) {
       setIsAuthenticated(true);
-      setUserId(user.id); // Set user ID from local storage
+      setUserId(user.id);
     }
   }, []);
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trips`, {
+        params: {
+          filters: {
+            title: {
+              $containsi: searchQuery, // Correct Strapi query for filtering titles
+            },
+          },
+          populate: {
+            user_profile: {
+              populate: {
+                photo: true,
+                user: true,
+              },
+            },
+            media: true,
+            trip_steps: true, // Populate trip_steps if needed
+          },
+        },
+      });
+      const trips = response.data.data; // Ensure `data` contains the array of trips
+      if (Array.isArray(trips)) {
+        onSearch(trips);
+      } else {
+        console.error('Unexpected response structure:', response.data);
+        onSearch([]);
+      }
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      onSearch([]);
+    }
+  };
+  
+  
   const profileLink = isAuthenticated ? `/${userId}` : '/log';
 
   return (
@@ -60,8 +95,19 @@ const Navbar = () => {
             </div>
             
             <div className='hidden md:flex items-center justify-center flex-grow'>
-            
-              <div className='flex text-white gap-6'>
+              <div className='flex text-black gap-6'>
+                <form onSubmit={handleSearch} className="flex items-center">
+                  <input
+                    type="text"
+                    className="rounded-md border px-3 py-2 text-sm"
+                    placeholder="Search posts..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <button type="submit" className="ml-2 text-sm text-white bg-purple-800 px-4 py-2 rounded-md">
+                    Search
+                  </button>
+                </form>
               </div>
             </div>
            
