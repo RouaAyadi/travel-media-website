@@ -20,7 +20,7 @@ const Navbar = ({ onSearch }) => {
   }, []);
 
   const handleSearch = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the form from refreshing the page
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trips`, {
         params: {
@@ -53,8 +53,11 @@ const Navbar = ({ onSearch }) => {
       onSearch([]);
     }
   };
-  
-  
+
+  useEffect(() => {
+    handleSearch(new Event('change')); // Trigger search on component mount
+  }, [searchQuery]);
+
   const profileLink = isAuthenticated ? `/${userId}` : '/log';
 
   return (
@@ -95,18 +98,16 @@ const Navbar = ({ onSearch }) => {
             </div>
             <div className='hidden md:flex items-center justify-center flex-grow'>
               <div className='flex text-black gap-6'>
-                <form onSubmit={handleSearch} className="flex items-center">
-                  <input
-                    type="text"
-                    className="rounded-md border px-3 py-2 text-sm"
-                    placeholder="Search posts..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <button type="submit" className="ml-2 text-sm text-white bg-purple-800 px-4 py-2 rounded-md">
-                    Search
-                  </button>
-                </form>
+                <input
+                  type="text"
+                  className="rounded-md border px-3 py-2 text-sm"
+                  placeholder="Search posts..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type="button" className="ml-2 text-sm text-white bg-purple-800 px-4 py-2 rounded-md">
+                  Search
+                </button>
               </div>
             </div>
             <div className='flex text-white gap-20 pr-2'>

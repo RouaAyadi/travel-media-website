@@ -126,6 +126,9 @@ const StepCard = ({trip,steps}) => {
                     </Link>
                   </div>
                 )}
+                <div className="bg-gray-100 p-2 rounded-md mb-4 text-center w-full">
+                    <h2 className="text-xl font-semibold"> A step of the trip : {trip.title}</h2>
+                </div>
                 <div className="flex flex-col items-center mb-4">
                   <h2 className="text-2xl font-semibold mb-4 text-center">{step.name}</h2>
                   {step.media && step.media.length > 1 ? (
