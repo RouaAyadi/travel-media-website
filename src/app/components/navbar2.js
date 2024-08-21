@@ -93,6 +93,7 @@ const Navbar = ({ onSearch }) => {
                 </Link>
               </div>
             </div>
+            
             <div className='hidden md:flex items-center justify-center flex-grow'>
               <div className='flex text-black gap-6'>
                 <form onSubmit={handleSearch} className="flex items-center">
@@ -109,6 +110,7 @@ const Navbar = ({ onSearch }) => {
                 </form>
               </div>
             </div>
+           
             <div className='flex text-white gap-20 pr-2'>
               <Link href='/Map' className='flex items-center gap-1 hover:text-gray-300 duration-500'>
                 <img src="location-pin.png" alt="Map" className="h-8 w-8" />
@@ -126,6 +128,7 @@ const Navbar = ({ onSearch }) => {
           </div>
           {showMenu && (
             <div className="md:hidden flex text-white" id="mobile-menu">
+            
               <div className="space-y-1 px-2 pb-3 pt-2">
                 <Link href={profileLink} className='block py-2 px-4 flex items-center gap-1 hover:text-teal-300 duration-500'>
                   <img src="profile.png" alt="Profile" className="inline-block mr-2 h-5 w-5" />

@@ -7,7 +7,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import { fetchPostsNById } from '../../../utils/user';
-import { deleteTrip, editTrip } from '../../../store/Trip';
+import { deleteTrip, editTrip , uploadMedia } from '../../../store/Trip';
 import MapModal from './modalmap';
 
 const ProfilePage = ({ data, userID }) => {
@@ -20,6 +20,9 @@ const ProfilePage = ({ data, userID }) => {
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
   const [showMapModal, setShowMapModal] = useState(false);
+  const [hasEdited, setHasEdited] = useState(false);
+
+
   const [newPostData, setNewPostData] = useState({
     title: '',
     description: '',
@@ -27,7 +30,7 @@ const ProfilePage = ({ data, userID }) => {
     longitude: '',
   });
 
-  const profileId = data.id;
+  const profileId = data?.id;
   const userIdFromLocalStorage = localStorage.getItem('user');
   const myUser = JSON.parse(userIdFromLocalStorage);
 
@@ -44,6 +47,23 @@ const ProfilePage = ({ data, userID }) => {
 
     fetchPosts();
   }, [profileId]);
+
+  useEffect(() => {
+    if (hasEdited) {
+      const fetchUpdatedPosts = async () => {
+        try {
+          const tripResp = await fetchPostsNById(profileId);
+          setPosts(tripResp.data);
+          setHasEdited(false); // Reset the flag after fetching
+        } catch (error) {
+          console.error('Error fetching updated posts:', error);
+        }
+      };
+  
+      fetchUpdatedPosts();
+    }
+  }, [hasEdited, profileId]);
+  
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -135,21 +155,36 @@ const ProfilePage = ({ data, userID }) => {
       alert("You're not authorized to edit this post.");
       return;
     }
-
     try {
-      const updatedPost = await editTrip(postId, {
+      let mediaId;
+      if (file) {
+        const uploadResponse = await uploadMedia(dispatch, { file, id: postId });
+        mediaId = uploadResponse?.data[0]?.id;
+      }
+  
+      const updatedData = {
         ...newPostData,
         latitude: parseFloat(newPostData.latitude),
         longitude: parseFloat(newPostData.longitude),
-      });
-      setPosts(posts.map((post) => (post.id === postId ? updatedPost : post)));
+        ...(mediaId && { media: mediaId }), // Only include media ID if uploaded
+      };
+  
+      await editTrip(postId, updatedData);
+  
+      setHasEdited(true); // Trigger the useEffect to re-fetch posts
+  
       setEditingPost(null);
+      setFile(null); // Clear the file input after upload
       alert('Post successfully updated.');
     } catch (error) {
       console.error('Error editing post:', error);
       alert('Failed to update post.');
     }
   };
+  
+  
+  
+
 
   const handleLocationSelect = (location) => {
     setNewPostData({
@@ -184,6 +219,7 @@ const ProfilePage = ({ data, userID }) => {
       [name]: value
     }));
   };
+
 
   const CustomPrevArrow = (props) => {
     const { className, style, onClick } = props;
@@ -252,10 +288,10 @@ const ProfilePage = ({ data, userID }) => {
               />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-3xl font-bold">{data.username}</h1>
-              <p className="text-lg text-gray-600">{data.first_name} {data.last_name}</p>
-              <p className="text-sm text-gray-500">{data.Bio}</p>
-              {isOwnProfile && (
+              <h1 className="text-3xl font-bold">{data?.username}</h1>
+              <p className="text-lg text-gray-600">{data?.first_name} {data?.last_name}</p>
+              <p className="text-sm text-gray-500">{data?.Bio}</p>
+              {file && (
                 <div className="mt-4">
                   <>
                     <button
@@ -362,6 +398,17 @@ const ProfilePage = ({ data, userID }) => {
                         className="block w-full mb-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                         placeholder="Longitude"
                       />
+
+                      {/* Add the media file input here */}
+                      <input 
+                        type="file" 
+                        accept="image/*,video/*" 
+                        onChange={(e) => handleFileChange(e)} 
+                        className="block w-full mb-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                      />
+
+
+
                       <button
                         type="button"
                         onClick={() => handleEditPost(post.id)}
