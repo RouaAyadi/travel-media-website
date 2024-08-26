@@ -1,18 +1,34 @@
+//profile navbar 
+
 "use client";
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 
-//homepage navbar old one 
+import { useRouter } from 'next/navigation';
+import { useUserContext, LogoutUser } from '../../../store/User';
 
-const Navbar = ({ onSearch }) => {
+
+const Navbar5 = ({pic ,fn,ln,onSearch}) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  
+
+  const handleLogout = async (dispatch, router) => {
+    try {
+      await LogoutUser(dispatch);
+      router.push('/log'); 
+    } catch (error) {
+      console.error('Failed to Log out:', error);
+    }
+  };
+
   useEffect(() => {
-    const token = localStorage.getItem('jwt');
+    const token = localStorage.getItem('jwt'); 
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (token && user) {
@@ -24,7 +40,7 @@ const Navbar = ({ onSearch }) => {
   const handleSearch = async (e) => {
     e.preventDefault(); // Prevent the form from refreshing the page
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trips`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trips?populate=*&filters[user_profile][id][$eq]=${userId}`, {
         params: {
           filters: {
             title: {
@@ -61,9 +77,12 @@ const Navbar = ({ onSearch }) => {
   }, [searchQuery]);
 
   const profileLink = isAuthenticated ? `/${userId}` : '/log';
+  const { dispatch } = useUserContext();
+  const router = useRouter();
 
   return (
     <>
+    
       <div id='Nav'>
         <div className='fixed top-0 left-0 right-0 bg-transparent rounded-b opacity-95'>
           <div className="relative flex h-16 items-center justify-between px-4 md:px-8">
@@ -86,47 +105,87 @@ const Navbar = ({ onSearch }) => {
                 )}
               </button>
             </div>
-            <div className="relative flex h-20 items-center justify-between px-8 md:px-16">
+            
+            <div className="relative flex h-20 items-center justify-between px-8 md:px-6">
               <div className="flex items-center space-x-2">
                 <Link href='/'>
                   <div className="flex items-center">
                     <img className="h-12 w-auto max-w-xs" src="logo.png" alt="Logo" />
-                    <p className='text-xl font-bold font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 uppercase pt-4'>
+                    <p className='text-xl font-bold font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 uppercase pt-4'>
                       TravelMedia
                     </p>
                   </div>
                 </Link>
+                
+              
+                
               </div>
             </div>
             
+            
             <div className='hidden md:flex items-center justify-center flex-grow'>
-              <div className='flex text-black gap-6'>
-                <input
-                  type="text"
-                  className="rounded-md border px-3 py-2 text-sm"
-                  placeholder="Search posts..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button type="button" className="ml-2 text-sm text-white bg-purple-800 px-4 py-2 rounded-md">
-                  Search
-                </button>
-              </div>
-            </div>
+        <div className='flex items-center gap-4'>
+            <input
+            type="text"
+            className="rounded-full border-2 border-blue-950 px-6 py-3 text-lg text-blue-900 placeholder-blue-950 bg-white shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent"
+            placeholder="Where do you want to go?"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button
+                type="button"
+                className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 text-white rounded-full px-6 py-3 shadow-md hover:shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    Search
+            </button>
+
+        </div>
+        </div>
+
            
-            <div className='flex text-white gap-20 pr-2'>
+            <div className='flex text-white gap-12 pr-2'>
               <Link href='/Map' className='flex items-center gap-1 hover:text-gray-300 duration-500'>
-                <img src="location-pin.png" alt="Map" className="h-8 w-8" />
-                <span className='mt-2 bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 hover:underline decoration-2 decoration-transparent hover:decoration-purple-800 transition-all duration-300'>
-                  Map
-                </span>
+                <button href="#" class="block py-2 px-3  text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 text-lg dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+                 Map
+                </button>
               </Link>
-              <Link href={profileLink} className='flex items-center gap-1 hover:text-gray-300 duration-500'>
-                <img src="profile.png" alt="Profile" className="h-8 w-8" />
-                <span className='mt-2 bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 hover:underline decoration-2 decoration-transparent hover:decoration-purple-800 transition-all duration-300'>
-                  Profile
-                </span>
-              </Link>
+              
+              <div className='relative flex justify-end items-center h-full cursor-pointer'>
+              <div class="text-right mr-[10px] text-black md:block"><p class="text-primary font-bold text-button_m whitespace-nowrap">{fn} {ln}</p></div>
+              <Menu as="div" className="relative ml-3">
+              <div>
+                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <span className="absolute -inset-1.5" />
+                  <span className="sr-only">Open user menu</span>
+                  <img
+                    alt=""
+                    src={pic}
+                    className="h-10 w-10 rounded-full"
+                  />
+                </MenuButton>
+              </div>
+              <MenuItems
+                transition
+                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+              >
+                <MenuItem>
+                  <a href={profileLink} className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                    Your Profile
+                  </a>
+                </MenuItem>
+                <MenuItem>
+                  <a href="/" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                    Home
+                  </a>
+                </MenuItem>
+                <MenuItem onClick={() => handleLogout(dispatch, router)}>
+                  <a href="/" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                    Sign out
+                  </a>
+                </MenuItem>
+              </MenuItems>
+            </Menu>
+            </div>
+
             </div>
           </div>
           
@@ -155,4 +214,4 @@ const Navbar = ({ onSearch }) => {
   );
 }
 
-export default Navbar;
+export default Navbar5;
