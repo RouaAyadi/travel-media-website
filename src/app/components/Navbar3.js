@@ -3,16 +3,16 @@ import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-//homepage navbar old one 
+//homepage navbar
 
-const Navbar = ({ onSearch }) => {
+const Navbar3 = ({ onSearch }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('jwt');
+    const token = localStorage.getItem('jwt'); 
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (token && user) {
@@ -55,6 +55,7 @@ const Navbar = ({ onSearch }) => {
       onSearch([]);
     }
   };
+  
 
   useEffect(() => {
     handleSearch(new Event('change')); // Trigger search on component mount
@@ -65,7 +66,7 @@ const Navbar = ({ onSearch }) => {
   return (
     <>
       <div id='Nav'>
-        <div className='fixed top-0 left-0 right-0 bg-transparent rounded-b opacity-95'>
+        <div className='fixed top-0 left-0 right-0 bg-transparent rounded-b opacity-95 bg-slate-100'>
           <div className="relative flex h-16 items-center justify-between px-4 md:px-8">
             <div className="md:hidden">
               <button
@@ -86,12 +87,13 @@ const Navbar = ({ onSearch }) => {
                 )}
               </button>
             </div>
-            <div className="relative flex h-20 items-center justify-between px-8 md:px-16">
+            
+            <div className="relative flex h-20 items-center justify-between px-8 md:px-6">
               <div className="flex items-center space-x-2">
                 <Link href='/'>
                   <div className="flex items-center">
                     <img className="h-12 w-auto max-w-xs" src="logo.png" alt="Logo" />
-                    <p className='text-xl font-bold font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 uppercase pt-4'>
+                    <p className='text-xl font-bold font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 uppercase pt-4'>
                       TravelMedia
                     </p>
                   </div>
@@ -100,33 +102,42 @@ const Navbar = ({ onSearch }) => {
             </div>
             
             <div className='hidden md:flex items-center justify-center flex-grow'>
-              <div className='flex text-black gap-6'>
-                <input
-                  type="text"
-                  className="rounded-md border px-3 py-2 text-sm"
-                  placeholder="Search posts..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button type="button" className="ml-2 text-sm text-white bg-purple-800 px-4 py-2 rounded-md">
-                  Search
-                </button>
-              </div>
-            </div>
+        <div className='flex items-center gap-4'>
+            <input
+            type="text"
+            className="rounded-full border-2 border-blue-950 px-6 py-3 text-lg text-blue-900 placeholder-blue-950 bg-white shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-transparent"
+            placeholder="Where do you want to go?"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button
+                type="button"
+                className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 text-white rounded-full px-6 py-3 shadow-md hover:shadow-lg transform hover:scale-105 transition-transform duration-300">
+                    Search
+            </button>
+
+        </div>
+        </div>
+
            
-            <div className='flex text-white gap-20 pr-2'>
+            <div className='flex text-white gap-12 pr-2'>
               <Link href='/Map' className='flex items-center gap-1 hover:text-gray-300 duration-500'>
-                <img src="location-pin.png" alt="Map" className="h-8 w-8" />
-                <span className='mt-2 bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 hover:underline decoration-2 decoration-transparent hover:decoration-purple-800 transition-all duration-300'>
-                  Map
-                </span>
+                <button href="#" class="block py-2 px-3  text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 text-lg dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+                 Map
+                </button>
               </Link>
               <Link href={profileLink} className='flex items-center gap-1 hover:text-gray-300 duration-500'>
-                <img src="profile.png" alt="Profile" className="h-8 w-8" />
-                <span className='mt-2 bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 hover:underline decoration-2 decoration-transparent hover:decoration-purple-800 transition-all duration-300'>
-                  Profile
-                </span>
+              <button href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 text-lg dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+                 Sign in
+                </button>
               </Link>
+              <Link href='../register' className='flex items-center gap-1 hover:text-gray-300 duration-500'>
+                <button type="button" class="text-white bg-blue-950 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-base px-6 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 rounded-3xl">
+                    Join us now
+                </button>
+              </Link>
+              
+
             </div>
           </div>
           
@@ -155,4 +166,4 @@ const Navbar = ({ onSearch }) => {
   );
 }
 
-export default Navbar;
+export default Navbar3;

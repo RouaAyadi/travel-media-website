@@ -9,6 +9,7 @@ import Slider from 'react-slick';
 import { fetchPostsNById } from '../../../utils/user';
 import { deleteTrip, editTrip , uploadMedia } from '../../../store/Trip';
 import MapModal from './modalmap';
+import Navbar5 from './Navbar5';
 
 const ProfilePage = ({ data, userID }) => {
   const { state, dispatch } = useUserContext();
@@ -21,6 +22,10 @@ const ProfilePage = ({ data, userID }) => {
   const [editingPost, setEditingPost] = useState(null);
   const [showMapModal, setShowMapModal] = useState(false);
   const [hasEdited, setHasEdited] = useState(false);
+
+  const handleSearch = (results) => {
+    setPosts(results); // Update the trips state with the search results
+  };
 
 
   const [newPostData, setNewPostData] = useState({
@@ -260,7 +265,8 @@ const ProfilePage = ({ data, userID }) => {
 
   return (
     <Fragment>
-      <SideNavbar />
+      <Navbar5 pic={previewUrl} fn={data?.first_name} ln={data?.last_name} trips={posts} onSearch={handleSearch}/>
+    <div className='pb-20'></div>
       <div className="min-h-screen bg-gray-100">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex items-center space-x-4">

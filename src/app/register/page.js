@@ -27,18 +27,18 @@ const Register = () => {
     };
 
     return (
-        <div className='relative flex justify-center items-center min-h-screen bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 p-4'>
+        <div className='relative flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-950 via-blue-200 to-blue-100 p-4'>
             <div className='flex items-stretch max-w-3xl w-full'>
                 {/* Image */}
                 <div className='flex-shrink-0 w-1/2'>
-                    <img src="/login.jpeg" alt="Register Image" className='w-full h-full object-cover rounded-l-md' />
+                    <img src="/image5.png" alt="Register Image" className='w-full h-full object-cover rounded-l-md' />
                 </div>
                 {/* Form */}
                 <div className='relative w-full max-w-md bg-white shadow-md rounded-r-md border border-gray-300 p-4'>
-                    <p className='text-3xl font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 uppercase font-bold'>
+                    <p className='text-3xl font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 uppercase font-bold'>
                         Register
                     </p>
-                    <p className='text-xl font-bold font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 uppercase pt-4'>
+                    <p className='text-xl font-bold font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 uppercase pt-4'>
                         Welcome to TravelMedia
                     </p>
                    
@@ -128,14 +128,14 @@ const Register = () => {
                             <button
                                 type='submit'
                                 name='sign'
-                                className="bg-gradient-to-r from-green-400 via-teal-700 to-purple-800 font-bold text-white rounded-md p-2 h-auto w-full sm:w-auto sm:px-8 text-sm focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-300 transform hover:scale-105 hover:shadow-lg"
+                                className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-white rounded-md p-2 h-auto w-full sm:w-auto sm:px-8 text-sm focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-300 transform hover:scale-105 hover:shadow-lg"
                             >
                                 Sign-up
                             </button>
                         </div>
                     </form>
                     <div className="flex justify-between mt-4">
-                        <Link href="/log" className="text-sm text-teal-700 hover:underline">
+                        <Link href="/log" className="text-sm text-gray-600 hover:underline">
                             Already have an account? Log in
                         </Link>
                     </div>

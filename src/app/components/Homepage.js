@@ -4,13 +4,17 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import Link from 'next/link';
-import Navbar from './navbar2'; // Make sure the path is correct
+import Navbar from './Navbar4'; // Make sure the path is correct
+import Navbarr from './Navbar3'; // Make sure the path is correct
+
 import PostModal from './PostModal';
 import PostCard from './PostCard';
 
 const HomePage = ({ tripss }) => {
   
   const [trips, setTrips] = useState(tripss);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
 
 
   const handleSearch = (results) => {
@@ -18,11 +22,27 @@ const HomePage = ({ tripss }) => {
   };
   
 
+  useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (token && user) {
+      console.log('User ID:', user.id); // Log userId to check if it's being set
+      setIsAuthenticated(true);
+    }
+  }, []);
 
 
   return (
     <div className="min-h-screen flex flex-col items-center relative">
-      <Navbar onSearch={handleSearch} />
+    <div className="w-full fixed top-0 left-0 right-0 z-50">
+        {isAuthenticated ? (
+          <Navbar onSearch={handleSearch} />
+        ) : (
+          <Navbarr onSearch={handleSearch} />
+        )}
+      </div>      
+      <div className='py-12'></div>
       <div className="absolute inset-0 overflow-hidden mt-20">
         {/* Background Illustrations */}
         <img
