@@ -25,18 +25,18 @@ const Login = () => {
     };
 
     return (
-        <div className='relative flex justify-center items-center min-h-screen bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 p-8'>
+        <div className='relative flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-950 via-blue-200 to-white p-8'>
             <div className='flex items-stretch max-w-4xl w-full'>
                 {/* Image */}
                 <div className='flex-shrink-0 w-1/2'>
-                    <img src="/login.jpeg" alt="Login Image" className='w-full h-full object-cover rounded-l-lg' />
+                    <img src="/image5.png" alt="Login Image" className='w-full h-full object-cover rounded-l-lg' />
                 </div>
                 {/* Form */}
                 <div className='relative w-full max-w-lg bg-white shadow-2xl rounded-r-lg border border-gray-300 p-8'>
-                    <p className='text-4xl font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 uppercase font-bold'>
+                    <p className='text-4xl font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 uppercase font-bold'>
                         Log-in
                     </p>
-                    <p className='text-3xl font-bold font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-b from-green-400 via-teal-700 to-purple-800 uppercase pt-12'>
+                    <p className='text-3xl font-bold font-sans-serif leading-none text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 uppercase pt-12'>
                         Welcome to TravelMedia
                     </p>
                     <div className='flex w-16 h-1 mb-8 mx-auto'></div>
@@ -73,7 +73,7 @@ const Login = () => {
                             <button
                                 type='submit'
                                 name='log'
-                                className="bg-gradient-to-r from-green-400 via-teal-700 to-purple-800 font-bold text-white rounded-md p-2 h-auto w-full sm:w-auto sm:px-10 focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-300 transform hover:scale-105 hover:shadow-lg"
+                                className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-white rounded-md p-2 h-auto w-full sm:w-auto sm:px-10 focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50 transition duration-300 transform hover:scale-105 hover:shadow-lg"
                             >
                                 Log-in
                             </button>
@@ -83,7 +83,7 @@ const Login = () => {
                         <Link href="/forgot-password" className="text-sm text-p-200 hover:underline">
                             Forgot Password?
                         </Link>
-                        <Link href="/register" className="text-sm text-teal-700 hover:underline">
+                        <Link href="/register" className="text-sm text-gray-700 hover:underline">
                             Don't have an account? Register
                         </Link>
                     </div>

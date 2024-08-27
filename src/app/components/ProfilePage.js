@@ -75,7 +75,7 @@ const ProfilePage = ({ data, userID }) => {
   return (
     <div className="min-h-screen bg-gray-100">
       <SideNavbar/>
-      <div className="max-w-6xl mx-auto px-4 py-8 flex space-x-8">
+      <div className="max-w-6xl mx-auto px-4 py-8 flex space-x-8 ">
         {/* Profile Section */}
         <div className=" bg-white p-6 rounded-lg shadow-lg max-w-xs">
           <div className="flex flex-col items-center space-y-4">
