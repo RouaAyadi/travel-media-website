@@ -114,7 +114,6 @@
       // Extract trip_steps from the response
       const trips = response.data?.data ?? [];
       const trip = trips.find(t => t.id === tripId);
-  
       return Array.isArray(trip?.trip_steps) ? trip.trip_steps : [];
     } catch (error) {
       console.error('Failed to fetch trip steps by trip ID:', error);
@@ -122,3 +121,22 @@
     }
   };
   
+
+
+
+export const fetchLikesByTripId = async (tripId) => {
+  try {
+    // Make a GET request to fetch the trip data including likes
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trips/${tripId}?populate[likes]=*`);
+
+    // Extract the likes from the response data
+    const likes = response.data.data.likes || [];
+
+    return likes;
+  } catch (error) {
+    console.error(`Error fetching likes for trip ${tripId}:`, error);
+
+    // Return an empty array on error
+    return [];
+  }
+};

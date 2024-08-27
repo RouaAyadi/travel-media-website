@@ -141,6 +141,22 @@ export const fetchMe = async (dispatch) => {
     return null;
   }
 };
+
+export const fetchMe2 = async () => {
+  const jwt = localStorage.getItem('jwt');
+  try {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/users/me`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch me:', error);
+    return null;
+  }
+};
+
 export const LoginUser = async (dispatch, { email, password }) => {
   try {
     const resp = await axios.post(
