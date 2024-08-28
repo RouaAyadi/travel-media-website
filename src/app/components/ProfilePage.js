@@ -2,13 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext, uploadProfilePic, fetchMe } from '../../../store/User';
 import PostProfile from './PostProfile';
-import SideNavbar from './navbar';
+import Navbar from './Navbar5';
 
 const ProfilePage = ({ data, userID }) => {
   const { state, dispatch } = useUserContext();
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const [posts, setPosts] = useState([]);
+
+
+  
+  const handleSearch = (results) => {
+    setPosts(results); // Update the trips state with the search results
+  };
 
   const profileId = data?.id;
   const userIdFromLocalStorage = localStorage.getItem('user');
@@ -74,23 +81,24 @@ const ProfilePage = ({ data, userID }) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <SideNavbar/>
-      <div className="max-w-6xl mx-auto px-4 py-8 flex space-x-8 ">
+    <Navbar pic={previewUrl} fn={data?.first_name} ln={data?.last_name} trips={posts} onSearch={handleSearch}/> 
+    <div className="py-10"></div>     
+    <div className="max-w-6xl mx-auto px-4 py-8  flex space-x-8">
         {/* Profile Section */}
-        <div className=" bg-white p-6 rounded-lg shadow-lg max-w-xs">
+        <div className=" bg-white p-6 rounded-lg shadow-lg max-w-xs h-min left-10 fixed	 ">
           <div className="flex flex-col items-center space-y-4">
             <div className="relative">
               <img
                 src={previewUrl || '/default.webp'}
                 alt="Profile"
-                className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg cursor-pointer hover:border-blue-500"
+                className="h-40 w-40 m-6 rounded-full object-cover border-4 border-white shadow-lg cursor-pointer hover:border-blue-500"
               />
               {isOwnProfile && (
                 <>
                  <button
                     type="button"
                     onClick={() => document.getElementById('profile-pic').click()}
-                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    className="mt-2 ml-7 inline-flex items-center justify-center rounded-xl bg-blue-900 py-2 px-2 font-dm text-base font-medium text-white shadow-xl shadow-blue-400/75 transition-transform duration-200 ease-in-out hover:scale-[1.02]"
                   >
                     Edit Profile Image
                   </button>
@@ -144,14 +152,26 @@ const ProfilePage = ({ data, userID }) => {
                     </div>
                 </div>              
               </div>
+              <div className="mt-2 text-sm text-gray-600">
+                <div class="flex gap-2 w-full">
+                  <div class="bg-gradient2 bg-opacity-10 h-[35px] w-[35px] flex justify-center items-center rounded">
+                    <svg height="auto" width="auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#211C54" class="w-[14px] h-[14px]">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z">
+                      </path>
+                    </svg>
+                  </div>
+                    <div><p class="text-p2 text-neutral-500">Email</p>
+                      <p className="font-medium">email</p>
+                    </div>
+                </div>              
+              </div>
             </div>
           </div>
         </div>
         
-
         {/* Posts Section */}
-        <div className="w-2/3">
-          <PostProfile data={data} userID={userID} />
+        <div className=" w-full">
+          <PostProfile data={data} userID={userID} posts={posts} />
         </div>
       </div>
     </div>
