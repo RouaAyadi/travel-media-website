@@ -11,6 +11,9 @@ module.exports = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      boxShadow: {
+        'md-gray': '0 4px 6px -1px rgba(107, 114, 128, 0.5)', // Custom shadow with gray color
+      },
       fontFamily: {
         new: ['Caveat'],
       },

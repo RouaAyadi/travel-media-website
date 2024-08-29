@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext, uploadProfilePic, fetchMe } from '../../../store/User';
 import PostProfile from './PostProfile';
-import SideNavbar from './navbar';
+import Navbar from './Navbar5';
 
 const ProfilePage = ({ data, userID }) => {
   const { state, dispatch } = useUserContext();
@@ -74,7 +74,7 @@ const ProfilePage = ({ data, userID }) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <SideNavbar/>
+      <Navbar/>
       <div className="max-w-6xl mx-auto px-4 py-8 flex space-x-8 ">
         {/* Profile Section */}
         <div className=" bg-white p-6 rounded-lg shadow-lg max-w-xs">

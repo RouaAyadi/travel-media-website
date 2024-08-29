@@ -29,14 +29,14 @@ const PostCard = ({ trips }) => {
       for (const trip of trips) {
         try {
           const likes = await fetchLikesByTripId(trip.id);
-          console.log("likesssss",likes)
+          // console.log("likesssss",likes)
           likesForTrips[trip.id] = likes;
         } catch (error) {
           console.error(`Error fetching steps for trip ${trip.id}:`, error);
         }
       }
       setLikesData(likesForTrips);
-      console.log("likesdata",likesForTrips)
+      // console.log("likesdata",likesForTrips)
     };
 
     fetchLikesForTrips();
@@ -114,7 +114,7 @@ const PostCard = ({ trips }) => {
       // Fetch likes for the specific trip and user
       const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trips/${tripId}?populate[likes]=*`);
       const likes = response.data.data.likes || [];
-      console.log("inside handle",likes)
+      // console.log("inside handle",likes)
 
       
       // Ensure both IDs are treated as numbers for accurate comparison
@@ -131,7 +131,7 @@ const PostCard = ({ trips }) => {
     } else {
       // Like the trip if the user has not liked it
       await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
-        data: { trip: tripId, user: currentUser.id }
+        data: { trip: tripId, user: currentUser.id}
       });
       console.log("Like added");
     }
@@ -211,9 +211,9 @@ const PostCard = ({ trips }) => {
 
           const steps = stepsData[trip.id] || [];
           const likes = likesData[trip.id] || [];
-          console.log("likes:",likes[0]);
+          // console.log("likes:",likes[0]);
           const userId = likes
-          console.log("userid",userId.length)
+          // console.log("userid",userId.length)
 
           
 
