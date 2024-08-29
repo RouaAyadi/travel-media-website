@@ -24,7 +24,7 @@ const Navbar4 = ({ onSearch }) => {
     const fetchData = async () => {
       try {
         const userData = await fetchUserProfileById(userId);
-        console.log('API Response:', userData?.data[0]); // Log the API response for debugging
+        // console.log('API Response:', userData?.data[0]); // Log the API response for debugging
         setUserResp(userData?.data[0]);
         if (userData?.data[0].photo && userData?.data[0].photo.url) {
           setPreviewUrl(`${process.env.NEXT_PUBLIC_STRAPI_URL}${userData?.data[0].photo.url}`);
@@ -44,7 +44,7 @@ const Navbar4 = ({ onSearch }) => {
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (token && user) {
-      console.log('User ID:', user.id); // Log userId to check if it's being set
+      // console.log('User ID:', user.id); // Log userId to check if it's being set
       setIsAuthenticated(true);
       setUserId(user.id);
     }
