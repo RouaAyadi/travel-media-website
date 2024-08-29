@@ -10,7 +10,7 @@ import { fetchPostsNById } from '../../../utils/user';
 import { deleteTrip, editTrip , uploadMedia } from '../../../store/Trip';
 import MapModal from './modalmap';
 
-const PostProfile = ({ data, userID }) => {
+const PostProfile = ({ data, userID}) => {
   const { state, dispatch } = useUserContext();
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -262,14 +262,14 @@ const PostProfile = ({ data, userID }) => {
     <Fragment>
       
       <div className="min-h-screen bg-gray-100">
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto px-4 py-0 ">
         <img 
-            src="Profileimg.jpg" 
+            src="image5.png" 
             alt="Top Image" 
             className="w-full h-60 object-cover rounded-lg mb-4" 
           /> 
           <div className="mt-8 border border-gray-200 p-4 rounded-lg flex flex-col bg-white shadow-md">
-            <h2 className="text-xl font-semibold mb-4 text-center">My Posts</h2>
+            <div className='bg-gray-100 pt-2'><h2 className="text-xl font-semibold mb-4 text-center">My Posts</h2></div>
             {posts.map((post) => (
               <div key={post.id} className="flex bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 mb-4 items-start w-full max-w-3xl">
                 {Array.isArray(post.media) && post.media.length > 1 ? (
@@ -386,6 +386,7 @@ const PostProfile = ({ data, userID }) => {
                     </div>
                   ) : (
                     <>
+                    <div>
                       <p className="text-gray-800 font-semibold text-lg mb-2">{post.title}</p>
                       <p className="bg-gray-100 p-4 rounded-lg shadow-md leading-relaxed break-words overflow-wrap">
                         {post.description}
@@ -409,6 +410,7 @@ const PostProfile = ({ data, userID }) => {
                           </button>
                         </div>
                       )}
+                      </div>
                     </>
                   )}
                 </div>

@@ -202,7 +202,9 @@ const PostCard = ({ trips }) => {
   };
 
   return (
+    
     <div>
+      
       <div className="flex flex-col items-center gap-8">
         {trips?.map((trip) => {
           const profilePicUrl = trip.user_profile.photo?.url
@@ -223,19 +225,25 @@ const PostCard = ({ trips }) => {
                 className="bg-white bg-opacity-90 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 flex flex-col w-full max-w-lg"
               >
                 {trip.user_profile && (
-                  <div className="flex mb-4">
-                    <Link href={`/${trip.user_profile.user.id}`}>
-                      <img
-                        src={profilePicUrl}
-                        alt="User Profile"
-                        className="h-10 w-10 rounded-full object-cover mr-2"
-                      />
-                    </Link>
-                    <Link href={`/${trip.user_profile.user.id}`}>
-                      <h3 className="text-lg font-semibold">
-                        {trip.user_profile.first_name} {trip.user_profile.last_name}
-                      </h3>
-                    </Link>
+                  <div className="flex mb-4 relative">
+                    <Link href={`/${trip.user_profile.user.id}`} className="flex items-center space-x-4">
+                <img
+                  src={profilePicUrl}
+                  alt="User Profile"
+                  className="h-12 w-12 rounded-full object-cover shadow-md"
+                />
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {trip.user_profile.first_name} {trip.user_profile.last_name}
+                  </h3>
+                  <div className="text-sm text-gray-500">{new Date(trip.createdAt).toLocaleDateString('en-US',{ 
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}</div>
+                </div>
+              </Link>
+
                   </div>
                 )}
                 <div className="flex flex-col items-center mb-4">
@@ -248,19 +256,20 @@ const PostCard = ({ trips }) => {
                             <img
                               src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${media.url}`}
                               alt={trip.title}
-                              className="w-60 h-60 object-cover rounded-lg cursor-pointer mx-auto"
+                              className="w-96 h-96 object-cover rounded-lg cursor-pointer mx-auto"
                               onClick={() => handleMediaClick(`${process.env.NEXT_PUBLIC_STRAPI_URL}${media.url}`)}
                             />
                           ) : (
                             <video
                               src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${media.url}`}
-                              className="w-60 h-60 object-cover rounded-lg cursor-pointer mx-auto"
+                              className="w-96 h-960 object-cover rounded-lg cursor-pointer mx-auto"
                               controls
                               onClick={() => handleMediaClick(`${process.env.NEXT_PUBLIC_STRAPI_URL}${media.url}`)}
                             />
                           )}
                         </div>
                       ))}
+                      
                     </Slider>
                   ) : (
                     trip?.media?.map((media) => (
@@ -269,13 +278,13 @@ const PostCard = ({ trips }) => {
                           <img
                             src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${media.url}`}
                             alt={trip.title}
-                            className="w-60 h-60 object-cover rounded-lg cursor-pointer"
+                            className="w-96 h-96 object-cover rounded-lg cursor-pointer"
                             onClick={() => handleMediaClick(`${process.env.NEXT_PUBLIC_STRAPI_URL}${media.url}`)}
                           />
                         ) : (
                           <video
                             src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${media.url}`}
-                            className="w-60 h-60 object-cover rounded-lg cursor-pointer"
+                            className="w-96 h-96 object-cover rounded-lg cursor-pointer"
                             controls
                             onClick={() => handleMediaClick(`${process.env.NEXT_PUBLIC_STRAPI_URL}${media.url}`)}
                           />
@@ -284,12 +293,23 @@ const PostCard = ({ trips }) => {
                     ))
                   )}
                 </div>
-                <p className="text-gray-600 mb-2">
-                  <span className="font-bold">Arrival Date:</span> {trip.arrival}
-                </p>
-                <p className="text-gray-600 mb-2">
-                  <span className="font-bold">Depart Date:</span> {trip.depart}
-                </p>
+                <div className="text-center my-2">
+                  <p className="text-gray-600 font-medium text-lg">
+                    <span className="font-bold">From</span> 
+                    <span className="mx-2">{new Date(trip.depart).toLocaleDateString('en-US',{ 
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric'
+                                        })}</span>
+                    <span className="font-bold mx-2">to  </span> 
+                    <span>{new Date(trip.arrival).toLocaleDateString('en-US',{ 
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric'
+                                        })}</span>
+                  </p>
+                </div>
+
                 <div className="relative">
                   <p
                     id={`description-${trip.id}`}
@@ -306,6 +326,7 @@ const PostCard = ({ trips }) => {
                     </button>
                   )}
                 </div>
+                
                 <div>
                   <button onClick={() => handleLike(trip.id)}>
                     
@@ -322,6 +343,8 @@ const PostCard = ({ trips }) => {
           );
         })}
 
+
+        
 
         {selectedMedia && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
@@ -340,6 +363,10 @@ const PostCard = ({ trips }) => {
             </div>
           </div>
         )}
+        
+      </div>
+      <div>
+        
       </div>
     </div>
   );
