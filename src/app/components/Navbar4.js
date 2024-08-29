@@ -44,7 +44,7 @@ const Navbar4 = ({ onSearch }) => {
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (token && user) {
-      console.log('User ID:', user.id); // Log userId to check if it's being set
+      // console.log('User ID:', user.id); // Log userId to check if it's being set
       setIsAuthenticated(true);
       setUserId(user.id);
     }
