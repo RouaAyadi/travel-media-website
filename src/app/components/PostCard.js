@@ -19,19 +19,24 @@ const PostCard = ({ trips }) => {
   const [showLikesModal, setShowLikesModal] = useState(false);
   const [modalData, setModalData] = useState([]); // User IDs
   const [likesData, setLikesData] = useState({}); // Store likes per trip
-  const [numberLike, setNumberLike] = useState(false);
+
+  // useEffect(() => {
+  //   const fetchCurrentUser = async () => {
+  //     try {
+  //       const user = await fetchMe2();
+  //       setCurrentUser(user);
+  //     } catch (error) {
+  //       console.error('Error fetching user data:', error);
+  //     }
+  //   };
+
+  //   fetchCurrentUser();
+  // }, []);
 
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const user = await fetchMe2(); 
-        setCurrentUser(user); 
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
+    const user = JSON.parse(localStorage.getItem('user'));
+    setCurrentUser(user);
 
-    fetchCurrentUser();
   }, []);
 
   useEffect(() => {
@@ -80,6 +85,7 @@ const PostCard = ({ trips }) => {
     fetchLikesForTrips();
   }, [trips]);
 
+
   const handleMediaClick = (mediaUrl) => {
     setSelectedMedia(mediaUrl);
   };
@@ -95,49 +101,7 @@ const PostCard = ({ trips }) => {
     }));
   };
 
-  const handleLike = async (tripId) => {
-    if (!currentUser) {
-      console.error("User not authenticated.");
-      return;
-    }
-    try {
-      if (numberLike === true) {
-        const { data: likes } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
-          params: {
-            'filters[trip][id][$eq]': tripId,
-            'filters[user][id][$eq]': currentUser.id
-          }
-        });
-        const likeId = likes.data[0].id;
-        await axios.delete(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes/${likeId}`);
-        console.log("Like removed");
-        setNumberLike(false);
 
-        const likesForTrips = { ...likesData };
-        if (likesForTrips[tripId]) {
-          likesForTrips[tripId] -= 1;
-          setLikesData(likesForTrips);
-        }
-
-      } else {
-        await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
-          data: { trip: tripId, user: currentUser.id }
-        });
-        console.log("Like added");
-        setNumberLike(true);
-
-        const likesForTrips = { ...likesData };
-        if (likesForTrips[tripId]) {
-          likesForTrips[tripId] += 1;
-        } else {
-          likesForTrips[tripId] = 1;
-        }
-        setLikesData(likesForTrips);
-      }
-    } catch (error) {
-      console.error("Error updating like status:", error);
-    }
-  };
 
   const closeLikesModal = () => {
     setShowLikesModal(false);
@@ -192,7 +156,7 @@ const PostCard = ({ trips }) => {
     appendDots: (dots) => (
       <div style={{ position: 'relative', top: '-20px' }}>
         <ul style={{ margin: '0px' }}> {dots} </ul>
-      
+
       </div>
     ),
   };
@@ -206,6 +170,71 @@ const PostCard = ({ trips }) => {
 
           const steps = stepsData[trip.id] || [];
           const likesCount = likesData[trip.id] || 0;
+          const [numberLike, setNumberLike] = useState(false);
+          useEffect(() => {
+            const getMyLikes = async () => {
+              try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
+                  params: {
+                    'filters[trip][id][$eq]': trip.id,
+                    'filters[user][id][$eq]': currentUser.id
+                  }
+                });
+                // const likeId = response.data[0].id;
+                response.data.data.length === 1 ? setNumberLike(true) : setNumberLike(false);
+              } catch (error) {
+                console.error(`Error fetching likes for trip ${trip.id}:`, error);
+                setNumberLike(false);
+              }
+            };
+
+            getMyLikes();
+          }, [trip,currentUser]);
+
+          const handleLike = async (tripId) => {
+            if (!currentUser) {
+              console.error("User not authenticated.");
+              return;
+            }
+            try {
+              if (numberLike === true) {
+                const { data: likes } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
+                  params: {
+                    'filters[trip][id][$eq]': tripId,
+                    'filters[user][id][$eq]': currentUser.id
+                  }
+                });
+                const likeId = likes.data[0]?.id;
+                await axios.delete(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes/${likeId}`);
+                console.log("Like removed");
+                setNumberLike(false);
+
+                const likesForTrips = { ...likesData };
+                if (likesForTrips[tripId]) {
+                  likesForTrips[tripId] -= 1;
+                  setLikesData(likesForTrips);
+                }
+
+              } else {
+                console.log(tripId)
+                await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
+                  data: { trip: tripId, user: currentUser.id }
+                });
+                console.log("Like added");
+                setNumberLike(true);
+
+                const likesForTrips = { ...likesData };
+                if (likesForTrips[tripId]) {
+                  likesForTrips[tripId] += 1;
+                } else {
+                  likesForTrips[tripId] = 1;
+                }
+                setLikesData(likesForTrips);
+              }
+            } catch (error) {
+              console.error("Error updating like status:", error);
+            }
+          };
 
           return (
             <div key={trip.id} className="flex flex-col w-full max-w-lg">
@@ -321,15 +350,15 @@ const PostCard = ({ trips }) => {
 
                 <div>
                   <button onClick={() => handleLike(trip.id)} >
-                  
+
                     <span class="flex h-min w-min space-x-1 items-center rounded-full  hover:text-rose-600  hover:bg-rose-50 py-1 px-2 text-xs font-medium">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
-                      
+
                     </span>
                     <p class="font-semibold text-xs">{likesCount} Likes</p>
-                  
+
                   </button>
                 </div>
               </div>
