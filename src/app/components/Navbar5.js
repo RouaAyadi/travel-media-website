@@ -6,15 +6,22 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 
+import { fetchUserProfileById } from '../../../utils/user'
+
+
 import { useRouter } from 'next/navigation';
 import { useUserContext, LogoutUser } from '../../../store/User';
 
 
-const Navbar5 = ({pic ,fn,ln,onSearch}) => {
+const Navbar5 = ({onSearch}) => {
   const [showMenu, setShowMenu] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [userResp, setUserResp] = useState(null);
+
+
 
   
 
@@ -28,10 +35,30 @@ const Navbar5 = ({pic ,fn,ln,onSearch}) => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('jwt'); 
+    const fetchData = async () => {
+      try {
+        const userData = await fetchUserProfileById(userId);
+        // console.log('API Response:', userData?.data[0]); // Log the API response for debugging
+        setUserResp(userData?.data[0]);
+        if (userData?.data[0].photo && userData?.data[0].photo.url) {
+          setPreviewUrl(`${process.env.NEXT_PUBLIC_STRAPI_URL}${userData?.data[0].photo.url}`);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    if (userId) {
+      fetchData();  // Only fetch data if userId is defined
+    }
+  }, [userId]);  // Correctly depend on `userId`
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwt');
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (token && user) {
+      // console.log('User ID:', user.id); // Log userId to check if it's being set
       setIsAuthenticated(true);
       setUserId(user.id);
     }
@@ -79,6 +106,7 @@ const Navbar5 = ({pic ,fn,ln,onSearch}) => {
   const profileLink = isAuthenticated ? `/${userId}` : '/log';
   const { dispatch } = useUserContext();
   const router = useRouter();
+
 
   return (
     <>
@@ -150,7 +178,7 @@ const Navbar5 = ({pic ,fn,ln,onSearch}) => {
               </Link>
               
               <div className='relative flex justify-end items-center h-full cursor-pointer'>
-              <div class="text-right mr-[10px] text-black md:block"><p class="text-primary font-bold text-button_m whitespace-nowrap">{fn} {ln}</p></div>
+              <div class="text-right mr-[10px] text-black md:block"><p class="text-primary font-bold text-button_m whitespace-nowrap">{userResp?.first_name} {userResp?.last_name}</p></div>
               <Menu as="div" className="relative ml-3">
               <div>
                 <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -158,7 +186,7 @@ const Navbar5 = ({pic ,fn,ln,onSearch}) => {
                   <span className="sr-only">Open user menu</span>
                   <img
                     alt=""
-                    src={pic}
+                    src={previewUrl}
                     className="h-10 w-10 rounded-full"
                   />
                 </MenuButton>

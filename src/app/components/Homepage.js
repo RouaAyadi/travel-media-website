@@ -54,7 +54,7 @@ const HomePage = ({ tripss }) => {
   
 
   return (
-    <div className="min-h-screen bg-gray-100  flex flex-col items-center relative ">
+    <div className="min-h-screen bg-white  flex flex-col items-center relative ">
       <div className="w-full fixed top-0 left-0 right-0 z-50 ">
         {isAuthenticated ? (
           <Navbar onSearch={handleSearch} />
@@ -65,7 +65,7 @@ const HomePage = ({ tripss }) => {
       
 
       {/* Flex container to align Sidebar and PostCard side by side */}
-      <div className="container mx-auto px-4 mt-16 py-8 bg-white bg-gray-200 rounded-lg shadow-md relative flex gap-0">
+      <div className="container mx-auto px-4 mt-16 py-8  bg-gray-100 rounded-lg shadow-md relative flex gap-0">
 
         {/* Sidebar */}
         {/* Clinics Section */}
