@@ -24,7 +24,7 @@ const HomePage = ({ tripss }) => {
     const user = JSON.parse(localStorage.getItem('user'));
 
     if (token && user) {
-      // console.log('User ID:', user.id); // Log userId to check if it's being set
+      console.log('User ID:', user.id); // Log userId to check if it's being set
       setIsAuthenticated(true);
     }
   }, []);
@@ -38,7 +38,7 @@ const HomePage = ({ tripss }) => {
     });
     const users = response.data
     const limitedUsers = users.slice(1,5); // Limit to 3 users
-    // console.log("first",limitedUsers);
+    console.log("first",limitedUsers);
     return limitedUsers;
   };
   useEffect(() => {
@@ -49,13 +49,13 @@ const HomePage = ({ tripss }) => {
     getUsers();
   }, []);
    useEffect(() => {
-    // console.log("users", users);
+    console.log("users", users);
   }, [users]); 
   
 
   return (
-    <div className="min-h-screen bg-white  flex flex-col items-center relative ">
-      <div className="w-full fixed top-0 left-0 right-0 z-50 ">
+    <div className="min-h-screen flex flex-col items-center relative bg-gray-300 ">
+      <div className="w-full fixed top-0 left-0 right-0 z-50  ">
         {isAuthenticated ? (
           <Navbar onSearch={handleSearch} />
         ) : (
@@ -65,7 +65,7 @@ const HomePage = ({ tripss }) => {
       
 
       {/* Flex container to align Sidebar and PostCard side by side */}
-      <div className="container mx-auto px-4 mt-16 py-8  bg-gray-100 rounded-lg shadow-md relative flex gap-0">
+      <div className="container mx-auto px-4 mt-16 py-8 bg-white bg-opacity-75 rounded-lg shadow-md relative flex gap-0">
 
         {/* Sidebar */}
         {/* Clinics Section */}
@@ -187,9 +187,9 @@ const HomePage = ({ tripss }) => {
             <span className="bg-clip-text text-transparent bg-gradient-to-b from-teal-500 to-purple-800">
               Welcome to TravelMedia
             </span>
-            <img src="travel.gif" alt="Travel" className="h-12 w-auto " />
+            <img src="travel.gif" alt="Travel" className="h-12 w-auto" />
           </h1>
-          <PostCard trips={tripss}/>
+          <PostCard trips={trips}/>
         </div>
         {/* Image on the right */}
         

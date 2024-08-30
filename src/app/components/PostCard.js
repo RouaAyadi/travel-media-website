@@ -10,6 +10,7 @@ import StepCard from './StepCard';
 import { fetchMe2 } from '../../../store/User';
 import { fetchLikesByTripId } from "../../../utils/user";
 
+
 const PostCard = ({ trips }) => {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [expandedDescription, setExpandedDescription] = useState({});
@@ -18,25 +19,41 @@ const PostCard = ({ trips }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [showLikesModal, setShowLikesModal] = useState(false);
   const [modalData, setModalData] = useState([]); // User IDs
-  const [likesData, setLikesData] = useState({}); // Store likes per trip
+  const [userDetails, setUserDetails] = useState({}); // Key: userId, Value: user details
+  const [likesData,setLikesData]=useState({});
 
-  // useEffect(() => {
-  //   const fetchCurrentUser = async () => {
-  //     try {
-  //       const user = await fetchMe2();
-  //       setCurrentUser(user);
-  //     } catch (error) {
-  //       console.error('Error fetching user data:', error);
-  //     }
-  //   };
-
-  //   fetchCurrentUser();
-  // }, []);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    setCurrentUser(user);
+    const fetchLikesForTrips = async () => {
+      const likesForTrips = {};
+      for (const trip of trips) {
+        try {
+          const likes = await fetchLikesByTripId(trip.id);
+          // console.log("likesssss",likes)
+          likesForTrips[trip.id] = likes;
+        } catch (error) {
+          console.error(`Error fetching steps for trip ${trip.id}:`, error);
+        }
+      }
+      setLikesData(likesForTrips);
+      // console.log("likesdata",likesForTrips)
+    };
 
+    fetchLikesForTrips();
+  }, [trips]);
+
+    
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const user = await fetchMe2(); // Fetch user data
+        setCurrentUser(user); // Set the user in local state
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchCurrentUser();
   }, []);
 
   useEffect(() => {
@@ -67,23 +84,9 @@ const PostCard = ({ trips }) => {
     setDescriptionHeights(heights);
   }, [trips]);
 
-  useEffect(() => {
-    const fetchLikesForTrips = async () => {
-      const likesForTrips = {};
-      for (const trip of trips) {
-        try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trips/${trip.id}?populate=likes`);
-          const likesCount = response.data.data.likes.length;
-          likesForTrips[trip.id] = likesCount;
-        } catch (error) {
-          console.error(`Error fetching likes for trip ${trip.id}:`, error);
-        }
-      }
-      setLikesData(likesForTrips);
-    };
 
-    fetchLikesForTrips();
-  }, [trips]);
+ // Fetch likes data
+
 
 
   const handleMediaClick = (mediaUrl) => {
@@ -101,11 +104,49 @@ const PostCard = ({ trips }) => {
     }));
   };
 
+  const handleLike = async (tripId) => {
+    if (!currentUser) {
+      console.error("User not authenticated.");
+      return;
+    }
+  
+    try {
+      // Fetch likes for the specific trip and user
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/trips/${tripId}?populate[likes]=*`);
+      const likes = response.data.data.likes || [];
+      // console.log("inside handle",likes)
 
+      
+      // Ensure both IDs are treated as numbers for accurate comparison
+      const currentUserId = Number(currentUser.id);
 
+    // Filter likes to find if the current user has already liked the trip
+    const existingLike = likes.find(like => Number(like.attributes?.user?.data?.id) === currentUserId);
+    const likeId = existingLike ? existingLike.id : null;
+
+    if (likeId) {
+      // Unlike the trip if the user has already liked it
+      await axios.delete(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes/${likeId}`);
+      console.log("Like removed");
+    } else {
+      // Like the trip if the user has not liked it
+      await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
+        data: { trip: tripId, user: currentUser.id}
+      });
+      console.log("Like added");
+    }
+  } catch (error) {
+    console.error("Error updating like status:", error);
+  }
+};
+  
+  
+  
   const closeLikesModal = () => {
     setShowLikesModal(false);
   };
+
+  
 
   const CustomPrevArrow = (props) => {
     const { className, style, onClick } = props;
@@ -156,12 +197,14 @@ const PostCard = ({ trips }) => {
     appendDots: (dots) => (
       <div style={{ position: 'relative', top: '-20px' }}>
         <ul style={{ margin: '0px' }}> {dots} </ul>
-
       </div>
     ),
   };
+
   return (
+    
     <div>
+      
       <div className="flex flex-col items-center gap-8">
         {trips?.map((trip) => {
           const profilePicUrl = trip.user_profile.photo?.url
@@ -169,72 +212,12 @@ const PostCard = ({ trips }) => {
             : '/default.webp';
 
           const steps = stepsData[trip.id] || [];
-          const likesCount = likesData[trip.id] || 0;
-          const [numberLike, setNumberLike] = useState(false);
-          useEffect(() => {
-            const getMyLikes = async () => {
-              try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
-                  params: {
-                    'filters[trip][id][$eq]': trip.id,
-                    'filters[user][id][$eq]': currentUser.id
-                  }
-                });
-                // const likeId = response.data[0].id;
-                response.data.data.length === 1 ? setNumberLike(true) : setNumberLike(false);
-              } catch (error) {
-                console.error(`Error fetching likes for trip ${trip.id}:`, error);
-                setNumberLike(false);
-              }
-            };
+          const likes = likesData[trip.id] || [];
+          // console.log("likes:",likes[0]);
+          const userId = likes
+          // console.log("userid",userId.length)
 
-            getMyLikes();
-          }, [trip,currentUser]);
-
-          const handleLike = async (tripId) => {
-            if (!currentUser) {
-              console.error("User not authenticated.");
-              return;
-            }
-            try {
-              if (numberLike === true) {
-                const { data: likes } = await axios.get(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
-                  params: {
-                    'filters[trip][id][$eq]': tripId,
-                    'filters[user][id][$eq]': currentUser.id
-                  }
-                });
-                const likeId = likes.data[0]?.id;
-                await axios.delete(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes/${likeId}`);
-                console.log("Like removed");
-                setNumberLike(false);
-
-                const likesForTrips = { ...likesData };
-                if (likesForTrips[tripId]) {
-                  likesForTrips[tripId] -= 1;
-                  setLikesData(likesForTrips);
-                }
-
-              } else {
-                console.log(tripId)
-                await axios.post(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/likes`, {
-                  data: { trip: tripId, user: currentUser.id }
-                });
-                console.log("Like added");
-                setNumberLike(true);
-
-                const likesForTrips = { ...likesData };
-                if (likesForTrips[tripId]) {
-                  likesForTrips[tripId] += 1;
-                } else {
-                  likesForTrips[tripId] = 1;
-                }
-                setLikesData(likesForTrips);
-              }
-            } catch (error) {
-              console.error("Error updating like status:", error);
-            }
-          };
+          
 
           return (
             <div key={trip.id} className="flex flex-col w-full max-w-lg">
@@ -244,31 +227,30 @@ const PostCard = ({ trips }) => {
                 {trip.user_profile && (
                   <div className="flex mb-4 relative">
                     <Link href={`/${trip.user_profile.user.id}`} className="flex items-center space-x-4">
-                      <img
-                        src={profilePicUrl}
-                        alt="User Profile"
-                        className="h-12 w-12 rounded-full object-cover shadow-md"
-                      />
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-800">
-                          {trip.user_profile.first_name} {trip.user_profile.last_name}
-                        </h3>
-                        <div className="text-sm text-gray-500">
-                          {new Date(trip.createdAt).toLocaleDateString('en-US', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })}
-                        </div>
-                      </div>
-                    </Link>
+                <img
+                  src={profilePicUrl}
+                  alt="User Profile"
+                  className="h-12 w-12 rounded-full object-cover shadow-md"
+                />
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {trip.user_profile.first_name} {trip.user_profile.last_name}
+                  </h3>
+                  <div className="text-sm text-gray-500">{new Date(trip.createdAt).toLocaleDateString('en-US',{ 
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}</div>
+                </div>
+              </Link>
+
                   </div>
                 )}
                 <div className="flex flex-col items-center mb-4">
                   <h2 className="text-2xl font-semibold mb-4 text-center">{trip.title}</h2>
                   {trip.media && trip.media.length > 1 ? (
                     <Slider {...sliderSettings} className="w-full max-w-lg relative">
-                      {trip.media.map((media) => (
+                      {trip?.media?.map((media) => (
                         <div key={media.id} className="mb-4">
                           {media.mime.startsWith('image/') ? (
                             <img
@@ -287,9 +269,10 @@ const PostCard = ({ trips }) => {
                           )}
                         </div>
                       ))}
+                      
                     </Slider>
                   ) : (
-                    trip.media.map((media) => (
+                    trip?.media?.map((media) => (
                       <div key={media.id} className="mb-4">
                         {media.mime.startsWith('image/') ? (
                           <img
@@ -312,22 +295,18 @@ const PostCard = ({ trips }) => {
                 </div>
                 <div className="text-center my-2">
                   <p className="text-gray-600 font-medium text-lg">
-                    <span className="font-bold">From</span>
-                    <span className="mx-2">
-                      {new Date(trip.depart).toLocaleDateString('en-US', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </span>
-                    <span className="font-bold mx-2">to</span>
-                    <span>
-                      {new Date(trip.arrival).toLocaleDateString('en-US', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </span>
+                    <span className="font-bold">From</span> 
+                    <span className="mx-2">{new Date(trip.depart).toLocaleDateString('en-US',{ 
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric'
+                                        })}</span>
+                    <span className="font-bold mx-2">to  </span> 
+                    <span>{new Date(trip.arrival).toLocaleDateString('en-US',{ 
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric'
+                                        })}</span>
                   </p>
                 </div>
 
@@ -347,27 +326,25 @@ const PostCard = ({ trips }) => {
                     </button>
                   )}
                 </div>
-
+                
                 <div>
-                  <button onClick={() => handleLike(trip.id)} >
-
-                    <span class="flex h-min w-min space-x-1 items-center rounded-full  hover:text-rose-600  hover:bg-rose-50 py-1 px-2 text-xs font-medium">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-
-                    </span>
-                    <p class="font-semibold text-xs">{likesCount} Likes</p>
-
+                  <button onClick={() => handleLike(trip.id)}>
+                    
+                    {userId.length}
+                    ❤️ Likes
                   </button>
+                  
                 </div>
               </div>
-              <div className='pt-9'>
+               <div className='pt-9'>
                 <StepCard trip={trip} steps={steps} />
-              </div>
+              </div> 
             </div>
           );
         })}
+
+
+        
 
         {selectedMedia && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
@@ -386,10 +363,13 @@ const PostCard = ({ trips }) => {
             </div>
           </div>
         )}
+        
+      </div>
+      <div>
+        
       </div>
     </div>
   );
 };
 
 export default PostCard;
-

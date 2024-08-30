@@ -79,6 +79,7 @@ const ProfilePage = ({ data, userID }) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      
     <Navbar onSearch={handleSearch}/> 
     <div className="py-10"></div>     
     <div className=" mx-auto px-4 py-8  flex space-x-8">

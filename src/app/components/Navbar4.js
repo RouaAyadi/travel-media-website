@@ -104,7 +104,7 @@ const Navbar4 = ({ onSearch }) => {
   return (
     <>
       <div id='Nav'>
-        <div className='fixed top-0 left-0 right-0 bg-transparent rounded-b opacity-95  bg-slate-100'>
+        <div className='fixed top-0 left-0 right-0 bg-transparent rounded-b opacity-95  bg-white'>
           <div className="relative flex h-16 items-center justify-between px-4 md:px-8">
             <div className="md:hidden">
               <button
