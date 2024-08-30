@@ -189,7 +189,7 @@ const HomePage = ({ tripss }) => {
             </span>
             <img src="travel.gif" alt="Travel" className="h-12 w-auto " />
           </h1>
-          <PostCard trips={trips}/>
+          <PostCard trips={tripss}/>
         </div>
         {/* Image on the right */}
         
